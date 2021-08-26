@@ -1,4 +1,3 @@
-import { ProductType } from "../db/products";
 import type {
   APIGatewayProxyEvent,
   APIGatewayProxyResult,
@@ -6,6 +5,8 @@ import type {
 } from "aws-lambda";
 import { StatusCodes } from "http-status-codes";
 import type { FromSchema } from "json-schema-to-ts";
+
+import { ProductType } from "@db/products";
 
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, "body"> & {
   body: FromSchema<S>;
@@ -22,10 +23,6 @@ export const formatJSONResponse = (
 ) => {
   const response = options.message ? options : product;
   return {
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Credentials": true,
-    },
     statusCode,
     body: JSON.stringify(response),
   };

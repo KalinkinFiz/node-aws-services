@@ -1,3 +1,7 @@
+import { StatusCodes } from "http-status-codes";
+
+import AppError from "./AppError";
+
 export type ProductType = {
   count: number;
   description: string;
@@ -64,3 +68,16 @@ export const products = [
     title: "ProductName",
   },
 ];
+
+export const findProductById = (productId: string): ProductType | null => {
+  const foundProduct = products.find((product) => product.id === productId);
+  if (foundProduct) {
+    return foundProduct;
+  }
+
+  throw new AppError(
+    "Product not found",
+    StatusCodes.BAD_REQUEST,
+    "PRODUCT_NOT_FOUND"
+  );
+};
