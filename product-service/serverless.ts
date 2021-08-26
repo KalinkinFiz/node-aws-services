@@ -12,7 +12,7 @@ const serverlessConfiguration: AWS = {
       includeModules: true,
     },
   },
-  plugins: ["serverless-webpack"],
+  plugins: ["serverless-webpack", "serverless-offline"],
   provider: {
     name: "aws",
     runtime: "nodejs14.x",
