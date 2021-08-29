@@ -28,7 +28,7 @@ export const products = [
   {
     count: 7,
     description: "Short Product Description2",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a90a2",
+    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
     price: 23,
     title: "ProductTop",
   },
@@ -42,7 +42,7 @@ export const products = [
   {
     count: 7,
     description: "Short Product Description2",
-    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a2",
+    id: "7567ec4b-b10c-48c5-9345-fc73c48a80a3",
     price: 23,
     title: "Product",
   },
