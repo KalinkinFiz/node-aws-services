@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@middy/core": "^1.5.2",
+    "@middy/http-cors": "^2.5.1",
     "@middy/http-json-body-parser": "^1.5.2",
     "http-status-codes": "^2.1.4",
     "middy": "^0.36.0",
