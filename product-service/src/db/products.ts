@@ -120,3 +120,26 @@ export const findProductById = async (
     await client.end();
   }
 };
+
+export const findAllProducts = async (): Promise<ProductType[]> => {
+  const client = new Client(dbOptions);
+  let productsList: ProductType[];
+
+  const findAll = sql`
+    select p.id, count, price, title, description
+    from products p
+    join stocks s
+    on p.id=s.product_id
+  `;
+
+  await client.connect();
+
+  try {
+    productsList = (await client.query(findAll)).rows;
+    return productsList;
+  } catch (e) {
+    throw e;
+  } finally {
+    await client.end();
+  }
+};
