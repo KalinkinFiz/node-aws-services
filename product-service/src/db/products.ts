@@ -143,3 +143,48 @@ export const findAllProducts = async (): Promise<ProductType[]> => {
     await client.end();
   }
 };
+
+export const insertProduct = async ({
+  count,
+  description,
+  price,
+  title,
+}: ProductType): Promise<ProductType> => {
+  const client = new Client(dbOptions);
+  await client.connect();
+
+  try {
+    await client.query(sql`begin`);
+
+    const insertProduct = sql`
+      insert into products (title, description, price)
+      values($1, $2, $3) returning id;
+    `;
+
+    const insertStock = sql`
+      insert into stocks (product_id, count)
+      values($1, $2)
+    `;
+
+    const { id } = (
+      await client.query(insertProduct, [title, description, price])
+    ).rows[0];
+
+    await client.query(insertStock, [id, count]);
+    await client.query(sql`commit`);
+
+    return {
+      id,
+      count,
+      description,
+      price,
+      title,
+    };
+  } catch (e) {
+    await client.query(sql`rollback`);
+
+    throw new Error(e.message || 500);
+  } finally {
+    await client.end();
+  }
+};

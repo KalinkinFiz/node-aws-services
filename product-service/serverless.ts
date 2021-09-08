@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 
 import getProductsList from "@functions/getProductsList";
 import getProductsById from "@functions/getProductsById";
+import postProducts from "@functions/postProducts";
 
 dotenv.config();
 
@@ -38,7 +39,7 @@ const serverlessConfiguration: AWS = {
     lambdaHashingVersion: "20201221",
   },
   // import the function via paths
-  functions: { getProductsList, getProductsById },
+  functions: { getProductsList, getProductsById, postProducts },
   useDotenv: true,
 };
 

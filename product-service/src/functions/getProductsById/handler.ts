@@ -12,7 +12,7 @@ const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
     const { productId } = event?.pathParameters || {};
     let product: ProductType;
 
-    console.log("productId -->", productId);
+    console.log("📝 productId: ", productId);
 
     try {
       product = await findProductById(productId);
