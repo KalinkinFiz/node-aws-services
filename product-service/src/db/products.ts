@@ -109,13 +109,13 @@ export const findProductById = async (
     if (!product) {
       throw new AppError(
         "Product not found",
-        StatusCodes.BAD_REQUEST,
+        StatusCodes.NOT_FOUND,
         "PRODUCT_NOT_FOUND"
       );
     }
     return product;
   } catch (e) {
-    throw new Error(e.message);
+    throw e;
   } finally {
     await client.end();
   }

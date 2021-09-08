@@ -18,10 +18,7 @@ const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
       product = await findProductById(productId);
       return formatJSONResponse(product);
     } catch (e) {
-      return {
-        statusCode: e.statusCode,
-        body: e.message || 500,
-      };
+      return formatJSONResponse({ data: e.message }, e.statusCode || 500);
     }
   };
 
