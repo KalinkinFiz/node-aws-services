@@ -19,9 +19,14 @@ create table stocks (
 );
 
 insert into products (title, description, price) values
-  ('primer1', 'desc1', 3),
-  ('primer2', 'desc2', 6),
-  ('primer3', 'dexc3', 5);
+  ('ProductOne', 'Short Product Description1', 2.4),
+  ('ProductNew', 'Short Product Description2', 10),
+  ('ProductTop', 'Short Product Description3', 23),
+  ('ProductTitle', 'Short Product Description4', 15),
+  ('Product', 'Short Product Description5', 15),
+  ('ProductTest', 'Short Product Description6', 15),
+  ('Product2', 'Short Product Description7', 23),
+  ('ProductName', 'Short Product Description8', 15);
 
 with stock as (
   select
