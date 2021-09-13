@@ -6,8 +6,6 @@ import type {
 import { StatusCodes } from "http-status-codes";
 import type { FromSchema } from "json-schema-to-ts";
 
-import { ProductType } from "@db/products";
-
 type ValidatedAPIGatewayProxyEvent<S> = Omit<APIGatewayProxyEvent, "body"> & {
   body: FromSchema<S>;
 };
@@ -17,11 +15,9 @@ export type ValidatedEventAPIGatewayProxyEvent<S> = Handler<
 >;
 
 export const formatJSONResponse = (
-  product: ProductType | ProductType[] | {},
-  statusCode: number = StatusCodes.OK,
-  options: { message?: string } = {}
+  response: Record<string, unknown>,
+  statusCode: number = StatusCodes.OK
 ) => {
-  const response = options.message ? options : product;
   return {
     statusCode,
     body: JSON.stringify(response),

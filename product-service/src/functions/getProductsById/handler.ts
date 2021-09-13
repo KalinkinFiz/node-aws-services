@@ -12,14 +12,13 @@ const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
     const { productId } = event?.pathParameters || {};
     let product: ProductType;
 
+    console.log("📝 productId: ", productId);
+
     try {
-      product = findProductById(productId);
+      product = await findProductById(productId);
       return formatJSONResponse(product);
     } catch (e) {
-      return {
-        statusCode: e.statusCode,
-        body: e.message,
-      };
+      return formatJSONResponse({ data: e.message }, e.statusCode || 500);
     }
   };
 

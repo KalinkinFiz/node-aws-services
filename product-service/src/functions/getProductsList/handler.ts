@@ -5,9 +5,19 @@ import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
 
 import schema from "./schema";
-import { products } from "@db/products";
+import { findAllProducts } from "@db/products";
 
 const getProductsList: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
-  async (_event) => formatJSONResponse(products);
+  async (_event) => {
+    let result;
+
+    try {
+      result = await findAllProducts();
+
+      return formatJSONResponse(result);
+    } catch (e) {
+      return formatJSONResponse({ data: e.message }, e.statusCode || 500);
+    }
+  };
 
 export const main = middyfy(getProductsList);
