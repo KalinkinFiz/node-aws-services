@@ -1,6 +1,7 @@
 import "source-map-support/register";
 
 import * as AWS from "aws-sdk";
+import cors from "@middy/http-cors";
 
 import { formatJSONResponse } from "@libs/apiGateway";
 import { middyfy } from "@libs/lambda";
@@ -16,10 +17,7 @@ const importProductsFile = async (event) => {
   };
   const signedUrl = await s3.getSignedUrlPromise("putObject", params);
 
-  return formatJSONResponse({
-    statusCode: 200,
-    body: signedUrl,
-  });
+  return formatJSONResponse({ signedUrl }, 200);
 };
 
-export const main = middyfy(importProductsFile);
+export const main = middyfy(importProductsFile).use(cors());
