@@ -36,6 +36,13 @@ const serverlessConfiguration: AWS = {
         Action: "s3:*",
         Resource: `arn:aws:s3:::rss-node-in-aws-s3/*`,
       },
+      {
+        Effect: "Allow",
+        Action: "sqs:SendMessage",
+        Resource: {
+          "Fn::ImportValue": "product-service-dev-CatalogItemsQueueArn",
+        },
+      },
     ],
     lambdaHashingVersion: "20201221",
   },
