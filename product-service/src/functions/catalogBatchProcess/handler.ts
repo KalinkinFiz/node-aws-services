@@ -1,6 +1,6 @@
 import "source-map-support/register";
 
-import lambda from "aws-lambda";
+import * as lambda from "aws-lambda";
 import { SNS } from "aws-sdk";
 
 import { middyfy } from "@libs/lambda";
@@ -26,7 +26,7 @@ const catalogBatchProcess = async (event: lambda.SQSEvent) => {
           null,
           2
         )}`,
-        TopicArn: process.env.CREATE_PRODUCT_TOPIC_ARN,
+        TopicArn: "CreateProductTopic",
         MessageAttributes: {
           highestPrice: {
             DataType: "Number",
