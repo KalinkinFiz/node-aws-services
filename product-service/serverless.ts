@@ -4,10 +4,19 @@ import dotenv from "dotenv";
 import getProductsList from "@functions/getProductsList";
 import getProductsById from "@functions/getProductsById";
 import postProducts from "@functions/postProducts";
+import catalogBatchProcess from "@functions/catalogBatchProcess";
 
 dotenv.config();
 
-const { PG_USER, PG_HOST, PG_DB, PG_PASSWORD, PG_PORT } = process.env;
+const {
+  PG_USER,
+  PG_HOST,
+  PG_DB,
+  PG_PASSWORD,
+  PG_PORT,
+  PRODUCTS_SUBSCRIPTION_EMAIL,
+  EXPENSIVE_PRODUCTS_SUBSCRIPTION_EMAIL,
+} = process.env;
 
 const serverlessConfiguration: AWS = {
   service: "product-service",
@@ -36,11 +45,97 @@ const serverlessConfiguration: AWS = {
       PG_PASSWORD,
       PG_PORT,
     },
+    iamRoleStatements: [
+      {
+        Effect: "Allow",
+        Action: "sqs:ReceiveMessage",
+        Resource: {
+          "Fn::GetAtt": ["CatalogItemsQueue", "Arn"],
+        },
+      },
+      {
+        Effect: "Allow",
+        Action: "sns:Publish",
+        Resource: {
+          Ref: "CreateProductTopic",
+        },
+      },
+    ],
     lambdaHashingVersion: "20201221",
   },
   // import the function via paths
-  functions: { getProductsList, getProductsById, postProducts },
+  functions: {
+    getProductsList,
+    getProductsById,
+    postProducts,
+    catalogBatchProcess,
+  },
   useDotenv: true,
+  resources: {
+    Resources: {
+      CatalogItemsQueue: {
+        Type: "AWS::SQS::Queue",
+        Properties: {
+          QueueName: "catalogItemsQueue",
+        },
+      },
+      CreateProductTopic: {
+        Type: "AWS::SNS::Topic",
+        Properties: {
+          TopicName: "createProductTopic",
+        },
+      },
+      CreateProductTopicSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          Endpoint: PRODUCTS_SUBSCRIPTION_EMAIL,
+          TopicArn: {
+            Ref: "CreateProductTopic",
+          },
+        },
+      },
+      CreateExpensiveProductTopicSubscription: {
+        Type: "AWS::SNS::Subscription",
+        Properties: {
+          Protocol: "email",
+          Endpoint: EXPENSIVE_PRODUCTS_SUBSCRIPTION_EMAIL,
+          TopicArn: {
+            Ref: "CreateProductTopic",
+          },
+          FilterPolicy: {
+            highestPrice: [
+              {
+                numeric: [">=", 100],
+              },
+            ],
+          },
+        },
+      },
+    },
+    Outputs: {
+      QueueURL: {
+        Value: {
+          Ref: "CatalogItemsQueue",
+        },
+        Export: {
+          Name: {
+            "Fn::Sub": "${AWS::StackName}-CatalogItemsQueueUrl",
+          },
+        },
+      },
+      QueueARN: {
+        Value: {
+          "Fn::GetAtt": ["CatalogItemsQueue", "Arn"],
+        },
+        Export: {
+          Name: {
+            "Fn::Sub": "${AWS::StackName}-CatalogItemsQueueArn",
+          },
+        },
+      },
+    },
+  },
 };
 
 module.exports = serverlessConfiguration;
