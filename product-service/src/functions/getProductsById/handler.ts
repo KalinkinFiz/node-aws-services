@@ -9,7 +9,7 @@ import { findProductById, ProductType } from "@db/products";
 
 const getProductsById: ValidatedEventAPIGatewayProxyEvent<typeof schema> =
   async (event) => {
-    const { productId } = event?.pathParameters || {};
+    const { productId } = event.pathParameters || {};
     let product: ProductType;
 
     console.log("📝 productId: ", productId);

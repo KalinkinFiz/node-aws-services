@@ -25,7 +25,7 @@ const serverlessConfiguration: AWS = {
     environment: {
       AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1",
       CATALOG_ITEMS_QUEUE_URL: {
-        "Fn::ImportValue": "product-service-dev-CatalogItemsQueueUrl",
+        "Fn::ImportValue": `product-service-dev-CatalogItemsQueueUrl`,
       },
     },
     iamRoleStatements: [
@@ -43,7 +43,7 @@ const serverlessConfiguration: AWS = {
         Effect: "Allow",
         Action: "sqs:SendMessage",
         Resource: {
-          "Fn::ImportValue": "product-service-dev-CatalogItemsQueueArn",
+          "Fn::ImportValue": `product-service-dev-CatalogItemsQueueArn`,
         },
       },
     ],

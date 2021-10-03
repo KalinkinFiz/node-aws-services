@@ -14,7 +14,7 @@ const TARGET_FOLDER = "parsed";
 const sendRecordsToQueue = (
   s3: AWS.S3,
   source: string,
-  sqs: AWS.SQS
+  sqs: SQS
 ): Promise<Transform> => {
   const csvReadStream = s3
     .getObject({
