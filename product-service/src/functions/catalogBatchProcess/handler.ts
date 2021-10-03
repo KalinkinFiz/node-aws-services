@@ -4,7 +4,6 @@ import * as lambda from "aws-lambda";
 import { SNS } from "aws-sdk";
 
 import { middyfy } from "@libs/lambda";
-
 import { insertProducts } from "@db/products";
 
 const catalogBatchProcess = async (event: lambda.SQSEvent) => {
@@ -26,7 +25,7 @@ const catalogBatchProcess = async (event: lambda.SQSEvent) => {
           null,
           2
         )}`,
-        TopicArn: "CreateProductTopic",
+        TopicArn: "CreateProductsTopic",
         MessageAttributes: {
           highestPrice: {
             DataType: "Number",

@@ -44,6 +44,8 @@ const serverlessConfiguration: AWS = {
       PG_DB,
       PG_PASSWORD,
       PG_PORT,
+      PRODUCTS_SUBSCRIPTION_EMAIL,
+      EXPENSIVE_PRODUCTS_SUBSCRIPTION_EMAIL,
     },
     iamRoleStatements: [
       {
@@ -57,7 +59,7 @@ const serverlessConfiguration: AWS = {
         Effect: "Allow",
         Action: "sns:Publish",
         Resource: {
-          Ref: "CreateProductTopic",
+          Ref: "CreateProductsTopic",
         },
       },
     ],
@@ -79,10 +81,10 @@ const serverlessConfiguration: AWS = {
           QueueName: "catalogItemsQueue",
         },
       },
-      CreateProductTopic: {
+      CreateProductsTopic: {
         Type: "AWS::SNS::Topic",
         Properties: {
-          TopicName: "createProductTopic",
+          TopicName: "createProductsTopic",
         },
       },
       CreateProductTopicSubscription: {
@@ -91,7 +93,7 @@ const serverlessConfiguration: AWS = {
           Protocol: "email",
           Endpoint: PRODUCTS_SUBSCRIPTION_EMAIL,
           TopicArn: {
-            Ref: "CreateProductTopic",
+            Ref: "CreateProductsTopic",
           },
         },
       },
@@ -101,7 +103,7 @@ const serverlessConfiguration: AWS = {
           Protocol: "email",
           Endpoint: EXPENSIVE_PRODUCTS_SUBSCRIPTION_EMAIL,
           TopicArn: {
-            Ref: "CreateProductTopic",
+            Ref: "CreateProductsTopic",
           },
           FilterPolicy: {
             highestPrice: [

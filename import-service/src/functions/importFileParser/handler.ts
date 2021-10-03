@@ -30,7 +30,7 @@ const sendRecordsToQueue = (
     sqs.sendMessage(
       {
         MessageBody: JSON.stringify(parsedRecord),
-        QueueUrl: "product-service-dev-CatalogItemsQueueUrl",
+        QueueUrl: process.env.CATALOG_ITEMS_QUEUE_URL,
       },
       (err, data) => {
         if (err) {
