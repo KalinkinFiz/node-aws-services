@@ -4,13 +4,18 @@ import { S3Event, S3Handler } from "aws-lambda";
 import { middyfy } from "@libs/lambda";
 import cors from "@middy/http-cors";
 import * as AWS from "aws-sdk";
-import * as csv from "csv-parser";
-import { Readable } from "stream";
+import csv from "csv-parser";
+import { Transform } from "stream";
+import { SQS } from "aws-sdk";
 
 const SOURCE_FOLDER = "uploaded";
 const TARGET_FOLDER = "parsed";
 
-const readCsvFile = (s3: AWS.S3, source: string): Promise<Readable> => {
+const sendRecordsToQueue = (
+  s3: AWS.S3,
+  source: string,
+  sqs: SQS
+): Promise<Transform> => {
   const csvReadStream = s3
     .getObject({
       Bucket: "rss-node-in-aws-s3",
@@ -18,11 +23,28 @@ const readCsvFile = (s3: AWS.S3, source: string): Promise<Readable> => {
     })
     .createReadStream();
 
-  csvReadStream.pipe(csv()).on("data", console.log);
+  const transformRecordsStream = csvReadStream.pipe(csv());
+
+  transformRecordsStream.on("data", (parsedRecord) => {
+    console.log(parsedRecord);
+    sqs.sendMessage(
+      {
+        MessageBody: JSON.stringify(parsedRecord),
+        QueueUrl: process.env.CATALOG_ITEMS_QUEUE_URL,
+      },
+      (err, data) => {
+        if (err) {
+          console.error(err);
+          return;
+        }
+        console.log(data);
+      }
+    );
+  });
 
   return new Promise(
-    (resolve, reject): Readable =>
-      csvReadStream.on("error", reject).on("end", resolve)
+    (resolve, reject): Transform =>
+      transformRecordsStream.on("error", reject).on("end", resolve)
   );
 };
 
@@ -47,12 +69,13 @@ const deleteCsvFile = (s3: AWS.S3, source: string) => {
 
 const importFileParser: S3Handler = async (event: S3Event): Promise<void> => {
   const s3 = new AWS.S3({ region: "eu-west-1" });
+  const sqs = new SQS();
 
   for (const record of event.Records) {
     const source = decodeURIComponent(record.s3.object.key.replace(/\+/g, " "));
     const fileName = source.replace(`${SOURCE_FOLDER}/`, "");
 
-    await readCsvFile(s3, source);
+    await sendRecordsToQueue(s3, source, sqs);
     await copyCsvFile(s3, source);
     await deleteCsvFile(s3, source);
 
