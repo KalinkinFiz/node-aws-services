@@ -12,6 +12,8 @@
   "dependencies": {
     "@middy/core": "^1.5.2",
     "@middy/http-json-body-parser": "^1.5.2",
+    "dotenv": "^10.0.0",
+    "serverless-offline": "^8.2.0",
     "source-map-support": "^0.5.19"
   },
   "devDependencies": {
