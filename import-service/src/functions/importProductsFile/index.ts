@@ -7,19 +7,21 @@ export default {
       http: {
         method: "get",
         path: "import",
-        authorizer: {
-          name: "tokenAuthorizer",
-          arn: "arn:aws:lambda:#{AWS::Region}:#{AWS::AccountId}:function:authorization-service-dev-basicAuthorizer",
-          resultTtlInSeconds: 0,
-          identitySource: "method.request.header.Authorization",
-          type: "token",
-        },
+        cors: true,
         request: {
           parameters: {
             querystrings: {
               name: true,
             },
           },
+        },
+        authorizer: {
+          name: "basicAuhorizer",
+          arn: {
+            "Fn::ImportValue": "authorization-service-dev-BasicAuthorizerArn",
+          },
+          resultTtlInSeconds: 0,
+          identitySource: "method.request.header.Authorization",
         },
       },
     },
