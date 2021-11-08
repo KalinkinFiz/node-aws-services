@@ -26,7 +26,11 @@ export class AppController {
     recipientUrl: string,
   ) {
     const { originalUrl, method, body } = req;
-    const shouldUseCache = method === 'GET' && recipient === 'products';
+
+    const [_, recipients, ...otherTokens] = originalUrl.split('/');
+
+    const shouldUseCache =
+      method === 'GET' && recipients === 'products' && !otherTokens.length;
 
     const cacheProducts = await this.cacheManager.get('CACHE_PRODUCTS');
 
